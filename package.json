@@ -1,0 +1,46 @@
+{
+  "name": "classnames-minifier",
+  "version": "0.0.1",
+  "description": "Library for configuring style modules to generate compressed classes",
+  "main": "src/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "classname",
+    "class",
+    "minify",
+    "compress",
+    "cut",
+    "css",
+    "sass",
+    "scss",
+    "modules"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vordgi/classnames-minifier.git"
+  },
+  "author": {
+    "name": "Savelyev Alexander",
+    "email": "vordgi1@gmail.com",
+    "url": "https://github.com/vordgi/"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "16.11.12",
+    "@types/uuid": "9.0.7",
+    "@types/webpack": "5.28.0",
+    "css-loader": "6.9.0",
+    "typescript": "5.2.2"
+  },
+  "peerDependencies": {
+    "css-loader": ">=4.0.0"
+  },
+  "dependencies": {
+    "uuid": "9.0.1"
+  }
+}
