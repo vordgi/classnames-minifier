@@ -1,1 +1,0 @@
-console.log('The package will be set up soon');
