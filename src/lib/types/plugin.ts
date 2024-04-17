@@ -3,4 +3,4 @@ export type Config = {
     distDir?: string;
     prefix?: string;
     reservedNames?: string[];
-}
+};

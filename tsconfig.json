@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "outDir": "dist",
     "rootDir": "src",
+    "removeComments": true,
     "declaration": true
   }
 }
