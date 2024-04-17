@@ -1,3 +1,4 @@
+import type { LoaderContext } from 'webpack';
 import path from 'path';
 import type { Config } from './lib/types/plugin';
 import validateConfig from './lib/validateConfig';

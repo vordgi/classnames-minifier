@@ -1,9 +1,8 @@
-import type { LoaderContext } from 'webpack/types';
+import type { LoaderContext } from 'webpack';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import type { Config } from './types/plugin';
-import validateConfig from './validateConfig';
 
 type CacheType = {
   [resourcePath: string]: {
