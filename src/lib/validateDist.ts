@@ -49,6 +49,9 @@ const validateDist = (pluginOptions: Config) => {
         if (prevData.version !== CODE_VERSION) {
             configDiffMessages.push(`Different package version: "${prevData.version}" -> "${CODE_VERSION}"`);
         }
+        if (prevData.disableDistDeletion && !disableDistDeletion) {
+            configDiffMessages.push(`"disableDistDeletion" set to "${disableDistDeletion}"`);
+        }
         if (configDiffMessages.length) {
             configurationError = `Changes found in package configuration: \n${configDiffMessages.map((message) => `- ${message};\n`)}`;
         }
