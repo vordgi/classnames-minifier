@@ -29,6 +29,7 @@ yarn add classnames-minifier
 * `reservedNames` - array of reserved names that should not be used by this package (must include prefix);
 * `cacheDir` - directory where this library will write the cache. Passing this parameter will enable caching. Use this option only if your framework really needs it;
 * `distDir` - directory where the project is being assembled. Used only when caching is enabled to synchronize caches between this library and the project;
+* `disableDistDeletion` - option that allows you to disable the automatic deletion of the dist folder if necessary (*f.e. differences in package setup in cache and now or first launch*);
 
 Configuration example:
 ```js
