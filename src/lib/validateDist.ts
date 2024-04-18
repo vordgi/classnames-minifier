@@ -24,27 +24,41 @@ const validateDist = (pluginOptions: Config) => {
 
     const manifestDir = path.join(cacheDir, "ncm-meta");
     const manifestPath = path.join(manifestDir, "manifest.json");
-    let isImpreciseDist = false;
+    let configurationError = "";
 
     if (fs.existsSync(manifestPath)) {
         const prevData = readManifest(manifestPath);
+        const configDiffMessages = [];
+        if (prevData.prefix !== prefix) {
+            configDiffMessages.push(`Different "prefix": "${prevData.prefix}" -> "${prefix}"`);
+        }
+        if (prevData.cacheDir !== cacheDir) {
+            configDiffMessages.push(`Different "cacheDir": "${prevData.cacheDir}" -> "${cacheDir}"`);
+        }
+        if (prevData.distDir !== distDir) {
+            configDiffMessages.push(`Different "distDir": "${prevData.distDir}" -> "${distDir}"`);
+        }
         if (
-            prevData.prefix !== prefix ||
-            prevData.cacheDir !== cacheDir ||
-            prevData.distDir !== distDir ||
             prevData.reservedNames?.length !== reservedNames?.length ||
-            prevData.reservedNames?.some((name) => !reservedNames?.includes(name)) ||
-            prevData.version !== CODE_VERSION
+            prevData.reservedNames?.some((name) => !reservedNames?.includes(name))
         ) {
-            isImpreciseDist = true;
+            configDiffMessages.push(
+                `Different "reservedNames": "${prevData.reservedNames?.join(", ")}" -> "${reservedNames?.join(", ")}"`,
+            );
+        }
+        if (prevData.version !== CODE_VERSION) {
+            configDiffMessages.push(`Different package version: "${prevData.version}" -> "${CODE_VERSION}"`);
+        }
+        if (configDiffMessages.length) {
+            configurationError = `Changes found in package configuration: \n${configDiffMessages.map((message) => `- ${message};\n`)}`;
         }
     } else {
-        isImpreciseDist = true;
+        configurationError = `Can not find the package cache manifest at ${manifestPath}\n`;
     }
-    if (isImpreciseDist) {
-        console.log("classnames-minifier: Changes found in package configuration. Cleaning the dist folder...");
+    if (configurationError) {
+        console.log(`classnames-minifier: ${configurationError}Cleaning the dist folder...`);
         fs.rmSync(distDir, { recursive: true, force: true });
-        console.log("classnames-minifier: Changes found in package configuration. Dist folder cleared");
+        console.log("classnames-minifier: Dist folder cleared");
     }
     if (!fs.existsSync(manifestDir)) fs.mkdirSync(manifestDir, { recursive: true });
     fs.writeFileSync(manifestPath, JSON.stringify({ ...pluginOptions, version: CODE_VERSION }), { encoding: "utf-8" });
