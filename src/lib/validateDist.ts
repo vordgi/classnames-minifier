@@ -13,7 +13,7 @@ const readManifest = (manifestPath: string) => {
 };
 
 const validateDist = (pluginOptions: Config) => {
-    const { cacheDir, distDir, prefix, reservedNames } = pluginOptions;
+    const { cacheDir, distDir, prefix, reservedNames, disableDistDeletion } = pluginOptions;
 
     if (!cacheDir || !distDir) {
         console.log(
@@ -56,9 +56,13 @@ const validateDist = (pluginOptions: Config) => {
         configurationError = `Can not find the package cache manifest at ${manifestPath}\n`;
     }
     if (configurationError) {
-        console.log(`classnames-minifier: ${configurationError}Cleaning the dist folder...`);
-        fs.rmSync(distDir, { recursive: true, force: true });
-        console.log("classnames-minifier: Dist folder cleared");
+        if (!disableDistDeletion) {
+            console.log(`classnames-minifier: ${configurationError}Cleaning the dist folder...`);
+            fs.rmSync(distDir, { recursive: true, force: true });
+            console.log("classnames-minifier: Dist folder cleared");
+        } else {
+            console.log(`classnames-minifier: ${configurationError}"disableDistDeletion" option was set to true`);
+        }
     }
     if (!fs.existsSync(manifestDir)) fs.mkdirSync(manifestDir, { recursive: true });
     fs.writeFileSync(manifestPath, JSON.stringify({ ...pluginOptions, version: CODE_VERSION }), { encoding: "utf-8" });
