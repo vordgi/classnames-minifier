@@ -19,7 +19,7 @@ class ConverterMinified {
 
     private reservedNames: string[];
 
-    dirtyСache: CacheType = {};
+    private freedNamesPolicy: "transmit" | "block";
 
     private symbols: string[] = [
         "a",
@@ -86,7 +86,9 @@ class ConverterMinified {
         "9",
     ];
 
-    private freeClasses: string[] = [];
+    dirtyСache: CacheType = {};
+
+    freeClasses: string[] = [];
 
     lastIndex = 0;
 
@@ -96,12 +98,22 @@ class ConverterMinified {
 
     private nameMap = [0];
 
-    constructor({ cacheDir, prefix = "", reservedNames = [] }: Config) {
+    constructor({ cacheDir, prefix = "", reservedNames = [], experimental }: Config) {
         this.prefix = prefix;
         this.reservedNames = reservedNames;
+        this.freedNamesPolicy = experimental?.freedNamesPolicy || "transmit";
 
         if (cacheDir) this.recycleCache(path.join(cacheDir, "ncm"));
     }
+
+    clean = () => {
+        this.dirtyСache = {};
+        this.freeClasses = [];
+        this.lastIndex = 0;
+        this.nextLoopEndsWith = 26;
+        this.currentLoopLength = 0;
+        this.nameMap = [0];
+    };
 
     private recycleCache = (cacheDir: string) => {
         this.cacheDir = cacheDir;
@@ -185,7 +197,7 @@ class ConverterMinified {
 
     private getTargetClassName(origName: string) {
         let targetClassName: string;
-        if (this.freeClasses.length) {
+        if (this.freeClasses.length && this.freedNamesPolicy === "transmit") {
             targetClassName = this.freeClasses.shift() as string;
         } else {
             targetClassName = this.generateClassName();
