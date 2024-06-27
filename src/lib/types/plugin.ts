@@ -4,4 +4,8 @@ export type Config = {
     prefix?: string;
     reservedNames?: string[];
     disableDistDeletion?: boolean;
+    experimental?: {
+        freedNamesPolicy?: "transmit" | "block";
+        blockLimit?: number;
+    };
 };

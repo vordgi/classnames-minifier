@@ -1,7 +1,7 @@
-import path from "path";
 import fs from "fs";
 import type { Config } from "./types/plugin";
 import { CODE_VERSION } from "./constants/configuration";
+import rmDist from "./rmDist";
 
 const readManifest = (manifestPath: string) => {
     try {
@@ -12,7 +12,7 @@ const readManifest = (manifestPath: string) => {
     }
 };
 
-const validateDist = (pluginOptions: Config) => {
+const validateDist = (pluginOptions: Config, manifestPath: string) => {
     const { cacheDir, distDir, prefix, reservedNames, disableDistDeletion } = pluginOptions;
 
     if (!cacheDir || !distDir) {
@@ -21,9 +21,6 @@ const validateDist = (pluginOptions: Config) => {
         );
         return;
     }
-
-    const manifestDir = path.join(cacheDir, "ncm-meta");
-    const manifestPath = path.join(manifestDir, "manifest.json");
     let configurationError = "";
 
     if (fs.existsSync(manifestPath)) {
@@ -60,15 +57,11 @@ const validateDist = (pluginOptions: Config) => {
     }
     if (configurationError) {
         if (!disableDistDeletion) {
-            console.log(`classnames-minifier: ${configurationError}Cleaning the dist folder...`);
-            fs.rmSync(distDir, { recursive: true, force: true });
-            console.log("classnames-minifier: Dist folder cleared");
+            rmDist(distDir, configurationError);
         } else {
             console.log(`classnames-minifier: ${configurationError}"disableDistDeletion" option was set to true`);
         }
     }
-    if (!fs.existsSync(manifestDir)) fs.mkdirSync(manifestDir, { recursive: true });
-    fs.writeFileSync(manifestPath, JSON.stringify({ ...pluginOptions, version: CODE_VERSION }), { encoding: "utf-8" });
 };
 
 export default validateDist;
