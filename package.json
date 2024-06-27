@@ -1,6 +1,6 @@
 {
   "name": "classnames-minifier",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Library for configuring style modules to generate compressed classes",
   "main": "./dist/ClassnamesMinifier.js",
   "types": "./dist/ClassnamesMinifier.d.ts",
