@@ -103,25 +103,30 @@ class ConverterMinified {
         this.reservedNames = reservedNames;
         this.freedNamesPolicy = experimental?.freedNamesPolicy || "transmit";
 
-        if (cacheDir) this.recycleCache(path.join(cacheDir, "ncm"));
+        if (cacheDir) this.invalidateCache(path.join(cacheDir, "ncm"));
     }
 
-    clean = () => {
+    reset = () => {
         this.dirtyСache = {};
         this.freeClasses = [];
         this.lastIndex = 0;
         this.nextLoopEndsWith = 26;
         this.currentLoopLength = 0;
         this.nameMap = [0];
+        if (this.cacheDir) {
+            this.invalidateCache(this.cacheDir);
+        }
     };
 
-    private recycleCache = (cacheDir: string) => {
+    private invalidateCache = (cacheDir: string) => {
         this.cacheDir = cacheDir;
         if (!existsSync(cacheDir)) mkdirSync(cacheDir, { recursive: true });
 
         const cachedFiles = readdirSync(cacheDir);
         if (cachedFiles.length) {
             console.log("classnames-minifier: Restoring pairs of classes...");
+        } else {
+            return;
         }
 
         const usedClassNames: string[] = [];

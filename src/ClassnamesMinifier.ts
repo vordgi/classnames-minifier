@@ -25,8 +25,18 @@ class ClassnamesMinifier {
             const manifestDir = path.join(config.cacheDir, "ncm-meta");
             const manifestPath = path.join(manifestDir, "manifest.json");
 
+            let distCleared = false;
             if (config.cacheDir) {
-                validateDist(config, manifestPath);
+                const errors = validateDist(config, manifestPath);
+
+                if (errors) {
+                    if (!config.disableDistDeletion) {
+                        rmDist(config.distDir, errors);
+                        distCleared = true;
+                    } else {
+                        console.log(`classnames-minifier: ${errors}"disableDistDeletion" option was set to true`);
+                    }
+                }
             }
 
             const { freedNamesPolicy = "transmit", blockLimit = 100000 } = config.experimental || {};
@@ -35,8 +45,11 @@ class ClassnamesMinifier {
                 this.converterMinified.freeClasses.length > blockLimit &&
                 config.distDir
             ) {
+                distCleared = true;
                 rmDist(config.distDir, `Freed names exceeds the limit (${blockLimit})`);
-                this.converterMinified.clean();
+            }
+            if (distCleared) {
+                this.converterMinified.reset();
             }
             if (!fs.existsSync(manifestDir)) fs.mkdirSync(manifestDir, { recursive: true });
             fs.writeFileSync(manifestPath, JSON.stringify({ ...config, version: CODE_VERSION }), { encoding: "utf-8" });
