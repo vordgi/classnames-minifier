@@ -1,7 +1,6 @@
 import fs from "fs";
 import type { Config } from "./types/plugin";
 import { CODE_VERSION } from "./constants/configuration";
-import rmDist from "./rmDist";
 
 const readManifest = (manifestPath: string) => {
     try {
@@ -55,13 +54,7 @@ const validateDist = (pluginOptions: Config, manifestPath: string) => {
     } else {
         configurationError = `Can not find the package cache manifest at ${manifestPath}\n`;
     }
-    if (configurationError) {
-        if (!disableDistDeletion) {
-            rmDist(distDir, configurationError);
-        } else {
-            console.log(`classnames-minifier: ${configurationError}"disableDistDeletion" option was set to true`);
-        }
-    }
+    return configurationError;
 };
 
 export default validateDist;
