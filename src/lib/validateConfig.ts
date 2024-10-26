@@ -1,6 +1,6 @@
 import type { Config } from "./types/plugin";
 
-const validKeys = ["prefix", "reservedNames", "cacheDir", "distDir", "disableDistDeletion", "experimental"];
+const validKeys = ["prefix", "reservedNames", "cacheDir", "distDir", "distDeletionPolicy", "experimental"];
 
 const validateIsObject = (config: unknown): config is Config => {
     if (!config) return false;

@@ -2,6 +2,7 @@ import type { LoaderContext } from "webpack";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "fs";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
+
 import type { Config } from "./types/plugin";
 
 type CacheType = {
@@ -19,7 +20,7 @@ class ConverterMinified {
 
     private reservedNames: string[];
 
-    private freedNamesPolicy: "transmit" | "block";
+    private syncFreedNames: boolean;
 
     private symbols: string[] = [
         "a",
@@ -101,7 +102,7 @@ class ConverterMinified {
     constructor({ cacheDir, prefix = "", reservedNames = [], experimental }: Config) {
         this.prefix = prefix;
         this.reservedNames = reservedNames;
-        this.freedNamesPolicy = experimental?.freedNamesPolicy || "transmit";
+        this.syncFreedNames = Boolean(experimental?.syncFreedNames);
 
         if (cacheDir) this.invalidateCache(path.join(cacheDir, "ncm"));
     }
@@ -202,7 +203,7 @@ class ConverterMinified {
 
     private getTargetClassName(origName: string) {
         let targetClassName: string;
-        if (this.freeClasses.length && this.freedNamesPolicy === "transmit") {
+        if (this.freeClasses.length && this.syncFreedNames) {
             targetClassName = this.freeClasses.shift() as string;
         } else {
             targetClassName = this.generateClassName();

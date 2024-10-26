@@ -12,7 +12,7 @@ const readManifest = (manifestPath: string) => {
 };
 
 const validateDist = (pluginOptions: Config, manifestPath: string) => {
-    const { cacheDir, distDir, prefix, reservedNames, disableDistDeletion } = pluginOptions;
+    const { cacheDir, distDir, prefix, reservedNames, distDeletionPolicy } = pluginOptions;
 
     if (!cacheDir || !distDir) {
         console.log(
@@ -45,8 +45,8 @@ const validateDist = (pluginOptions: Config, manifestPath: string) => {
         if (prevData.version !== CODE_VERSION) {
             configDiffMessages.push(`Different package version: "${prevData.version}" -> "${CODE_VERSION}"`);
         }
-        if (prevData.disableDistDeletion && !disableDistDeletion) {
-            configDiffMessages.push(`"disableDistDeletion" set to "${disableDistDeletion}"`);
+        if (prevData.distDeletionPolicy && !distDeletionPolicy) {
+            configDiffMessages.push(`"distDeletionPolicy" set to "${distDeletionPolicy}"`);
         }
         if (configDiffMessages.length) {
             configurationError = `Changes found in package configuration: \n${configDiffMessages.map((message) => `- ${message};\n`)}`;
