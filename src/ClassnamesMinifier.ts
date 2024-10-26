@@ -25,30 +25,31 @@ class ClassnamesMinifier {
         } else {
             const manifestDir = path.join(config.cacheDir, "ncm-meta");
             const manifestPath = path.join(manifestDir, "manifest.json");
+            const { distDeletionPolicy = "error" } = config;
 
             let distCleared = false;
             if (config.cacheDir) {
                 const errors = validateDist(config, manifestPath);
 
                 if (errors) {
-                    if (config.distDeletionPolicy === "auto") {
-                        console.log(`classnames-minifier: ${errors}"distDeletionPolicy" option was set to auto`);
+                    console.log(`classnames-minifier: "distDeletionPolicy" option was set to ${distDeletionPolicy}`);
+                    if (distDeletionPolicy === "auto") {
                         removeDist(config.distDir, errors);
                         distCleared = true;
-                    } else if (config.distDeletionPolicy === "error") {
-                        throw new Error(`classnames-minifier: ${errors}"distDeletionPolicy" option was set to error`);
+                    } else if (distDeletionPolicy === "error") {
+                        throw new Error(`classnames-minifier: ${errors}`);
                     } else {
-                        console.warn(`classnames-minifier: ${errors}"distDeletionPolicy" option was set to warning`);
+                        console.warn(`classnames-minifier: ${errors}`);
                     }
                 }
             }
 
             const { syncFreedNames, freedNamesLimit = 100000 } = config.experimental || {};
             if (!syncFreedNames && this.converterMinified.freeClasses.length > freedNamesLimit && config.distDir) {
-                if (config.distDeletionPolicy === "auto") {
+                if (distDeletionPolicy === "auto") {
                     removeDist(config.distDir, `Freed names exceeds the limit (${freedNamesLimit})`);
                     distCleared = true;
-                } else if (config.distDeletionPolicy === "error") {
+                } else if (distDeletionPolicy === "error") {
                     throw new Error(`Freed names exceeds the limit (${freedNamesLimit})`);
                 } else {
                     console.warn(`Freed names exceeds the limit (${freedNamesLimit})`);

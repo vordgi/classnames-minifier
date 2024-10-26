@@ -35,6 +35,10 @@ export type Config = {
      * @default "error"
      */
     distDeletionPolicy?: "warning" | "error" | "auto";
+    /**
+     * Additional check of the dist directory for freshness
+     */
+    checkDistFreshness?: () => boolean;
     experimental?: {
         /**
          * Automatically synchronize freed classes (for example, if you deleted the original styles)

@@ -12,7 +12,7 @@ const readManifest = (manifestPath: string) => {
 };
 
 const validateDist = (pluginOptions: Config, manifestPath: string) => {
-    const { cacheDir, distDir, prefix, reservedNames, distDeletionPolicy } = pluginOptions;
+    const { cacheDir, distDir, prefix, reservedNames, distDeletionPolicy, checkDistFreshness } = pluginOptions;
 
     if (!cacheDir || !distDir) {
         console.log(
@@ -51,7 +51,7 @@ const validateDist = (pluginOptions: Config, manifestPath: string) => {
         if (configDiffMessages.length) {
             configurationError = `Changes found in package configuration: \n${configDiffMessages.map((message) => `- ${message};\n`)}`;
         }
-    } else {
+    } else if (!checkDistFreshness?.()) {
         configurationError = `Can not find the package cache manifest at ${manifestPath}\n`;
     }
     return configurationError;
