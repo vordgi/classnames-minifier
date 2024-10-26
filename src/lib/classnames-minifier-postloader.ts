@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { LoaderContext } from "webpack";
-import type ConverterMinified from "./ConverterMinified";
 import fs from "fs";
+
+import type ConverterMinified from "./ConverterMinified";
 
 export default function (
     this: LoaderContext<{ classnamesMinifier: ConverterMinified }>,

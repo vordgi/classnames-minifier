@@ -3,9 +3,9 @@ export type Config = {
     distDir?: string;
     prefix?: string;
     reservedNames?: string[];
-    disableDistDeletion?: boolean;
+    distDeletionPolicy?: "warning" | "error" | "auto";
     experimental?: {
-        freedNamesPolicy?: "transmit" | "block";
-        blockLimit?: number;
+        syncFreedNames?: boolean;
+        freedNamesLimit?: number;
     };
 };

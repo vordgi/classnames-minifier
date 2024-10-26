@@ -2,12 +2,13 @@
 import type { LoaderContext } from "webpack";
 import fs from "fs";
 import path from "path";
+
 import type { Config } from "./lib/types/plugin";
 import { CODE_VERSION } from "./lib/constants/configuration";
 import validateConfig from "./lib/validateConfig";
 import ConverterMinified from "./lib/ConverterMinified";
 import validateDist from "./lib/validateDist";
-import rmDist from "./lib/rmDist";
+import removeDist from "./lib/removeDist";
 
 class ClassnamesMinifier {
     converterMinified: ConverterMinified;
@@ -30,23 +31,28 @@ class ClassnamesMinifier {
                 const errors = validateDist(config, manifestPath);
 
                 if (errors) {
-                    if (!config.disableDistDeletion) {
-                        rmDist(config.distDir, errors);
+                    if (config.distDeletionPolicy === "auto") {
+                        console.log(`classnames-minifier: ${errors}"distDeletionPolicy" option was set to auto`);
+                        removeDist(config.distDir, errors);
                         distCleared = true;
+                    } else if (config.distDeletionPolicy === "error") {
+                        throw new Error(`classnames-minifier: ${errors}"distDeletionPolicy" option was set to error`);
                     } else {
-                        console.log(`classnames-minifier: ${errors}"disableDistDeletion" option was set to true`);
+                        console.warn(`classnames-minifier: ${errors}"distDeletionPolicy" option was set to warning`);
                     }
                 }
             }
 
-            const { freedNamesPolicy = "transmit", blockLimit = 100000 } = config.experimental || {};
-            if (
-                freedNamesPolicy === "block" &&
-                this.converterMinified.freeClasses.length > blockLimit &&
-                config.distDir
-            ) {
-                distCleared = true;
-                rmDist(config.distDir, `Freed names exceeds the limit (${blockLimit})`);
+            const { syncFreedNames, freedNamesLimit = 100000 } = config.experimental || {};
+            if (!syncFreedNames && this.converterMinified.freeClasses.length > freedNamesLimit && config.distDir) {
+                if (config.distDeletionPolicy === "auto") {
+                    removeDist(config.distDir, `Freed names exceeds the limit (${freedNamesLimit})`);
+                    distCleared = true;
+                } else if (config.distDeletionPolicy === "error") {
+                    throw new Error(`Freed names exceeds the limit (${freedNamesLimit})`);
+                } else {
+                    console.warn(`Freed names exceeds the limit (${freedNamesLimit})`);
+                }
             }
             if (distCleared) {
                 this.converterMinified.reset();
