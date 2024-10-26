@@ -32,27 +32,32 @@ class ClassnamesMinifier {
                 const errors = validateDist(config, manifestPath);
 
                 if (errors) {
-                    console.log(`classnames-minifier: "distDeletionPolicy" option was set to ${distDeletionPolicy}`);
+                    console.log(`classnames-minifier: "distDeletionPolicy" option was set to "${distDeletionPolicy}"`);
                     if (distDeletionPolicy === "auto") {
                         removeDist(config.distDir, errors);
                         distCleared = true;
                     } else if (distDeletionPolicy === "error") {
-                        throw new Error(`classnames-minifier: ${errors}`);
+                        throw new Error(`classnames-minifier: Please, remove dist dir manually. ${errors}`);
                     } else {
-                        console.warn(`classnames-minifier: ${errors}`);
+                        console.warn(`classnames-minifier: Please, remove dist dir manually. ${errors}`);
                     }
                 }
             }
 
             const { syncFreedNames, freedNamesLimit = 100000 } = config.experimental || {};
             if (!syncFreedNames && this.converterMinified.freeClasses.length > freedNamesLimit && config.distDir) {
+                console.log(`classnames-minifier: "distDeletionPolicy" option was set to "${distDeletionPolicy}"`);
                 if (distDeletionPolicy === "auto") {
                     removeDist(config.distDir, `Freed names exceeds the limit (${freedNamesLimit})`);
                     distCleared = true;
                 } else if (distDeletionPolicy === "error") {
-                    throw new Error(`Freed names exceeds the limit (${freedNamesLimit})`);
+                    throw new Error(
+                        `Please, remove dist dir manually. Freed names exceeds the limit (${freedNamesLimit})`,
+                    );
                 } else {
-                    console.warn(`Freed names exceeds the limit (${freedNamesLimit})`);
+                    console.warn(
+                        `Please, remove dist dir manually. Freed names exceeds the limit (${freedNamesLimit})`,
+                    );
                 }
             }
             if (distCleared) {

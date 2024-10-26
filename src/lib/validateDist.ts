@@ -49,7 +49,7 @@ const validateDist = (pluginOptions: Config, manifestPath: string) => {
             configDiffMessages.push(`"distDeletionPolicy" set to "${distDeletionPolicy}"`);
         }
         if (configDiffMessages.length) {
-            configurationError = `Changes found in package configuration: \n${configDiffMessages.map((message) => `- ${message};\n`)}`;
+            configurationError = `Changes found in package configuration: \n${configDiffMessages.map((message) => `- ${message};\n`).join("")}`;
         }
     } else if (!checkDistFreshness?.()) {
         configurationError = `Can not find the package cache manifest at ${manifestPath}\n`;
